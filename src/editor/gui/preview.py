@@ -83,7 +83,8 @@ class Preview(QtWidgets.QLabel):
         return sx, scale, y.astype(int), sz
 
     def redraw(self):
-        painter = QtGui.QPainter(self._pixmap)
+        pixmap = self._pixmap
+        painter = QtGui.QPainter(pixmap)
 
         sky = QtGui.QColor(0, 200, 255)
         grass = QtGui.QColor(91, 173, 51), QtGui.QColor(81, 163, 41)
@@ -120,8 +121,8 @@ class Preview(QtWidgets.QLabel):
                     dl = x - (scale * 4)
                     dr = x + (scale * 4)
                     painter.drawLine(dl, y, dr, y)
-
-        self.setPixmap(self._pixmap)
+        painter.end()
+        self.setPixmap(pixmap)
 
 
 
