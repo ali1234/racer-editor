@@ -15,7 +15,7 @@ class TrackEditor(QtWidgets.QMainWindow):
         super().__init__()
         self._track = TrackGLSL()
 
-        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical)
+        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical, self)
         view3d = View3D(self, self._track)
         view3d.setMinimumSize(640, 480)
         splitter.addWidget(view3d)
@@ -26,13 +26,13 @@ class TrackEditor(QtWidgets.QMainWindow):
         splitter.setStretchFactor(1, 1)
         self.setCentralWidget(splitter)
 
-        preview = PreviewDock(self._track)
+        preview = PreviewDock(self._track, self)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, preview)
-        stats = StatsDock(self._track)
+        stats = StatsDock(self._track, self)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, stats)
-        segment = SegmentDock(self._track)
+        segment = SegmentDock(self._track, self)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, segment)
-        console = ConsoleDock({'track': self._track})
+        console = ConsoleDock({'track': self._track}, self)
         self.addDockWidget(QtCore.Qt.DockWidgetArea.BottomDockWidgetArea, console)
         console.hide()
 
@@ -122,8 +122,8 @@ class TrackEditor(QtWidgets.QMainWindow):
 
 class PreviewDock(QtWidgets.QDockWidget):
 
-    def __init__(self, track):
-        super().__init__("Preview")
+    def __init__(self, track, parent=None):
+        super().__init__("Preview", parent)
         self._preview = Preview(track)
         self._preview.setScaledContents(True)
         self._preview.setFixedSize(320, 240)
@@ -147,8 +147,8 @@ class PreviewDock(QtWidgets.QDockWidget):
 
 
 class StatsDock(QtWidgets.QDockWidget):
-    def __init__(self, track):
-        super().__init__("Stats")
+    def __init__(self, track, parent=None):
+        super().__init__("Stats", parent)
         self.form = QtWidgets.QFormLayout()
         self._rows = {}
         self.add_row('Control points:')
@@ -173,8 +173,8 @@ class StatsDock(QtWidgets.QDockWidget):
 
 
 class SegmentDock(QtWidgets.QDockWidget):
-    def __init__(self, track):
-        super().__init__('Segment')
+    def __init__(self, track, parent=None):
+        super().__init__('Segment', parent)
         self.form = QtWidgets.QFormLayout()
         self._rows = {}
         self.add_row('Selected:', QtWidgets.QLabel())
@@ -210,8 +210,8 @@ class SegmentDock(QtWidgets.QDockWidget):
 
 
 class ConsoleDock(QtWidgets.QDockWidget):
-    def __init__(self, locals):
-        super().__init__("Debug Console")
+    def __init__(self, locals, parent=None):
+        super().__init__("Debug Console", parent)
         console = PythonConsole(locals=locals)
         console.eval_queued()
         self.setWidget(console)
